@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContiQR - Universidad Continental</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --uc-blue: #0046ad;
+            --uc-red: #d4002a;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --primary: #1e549f;
+            --secondary: #28a745;
+            --accent: #ffc107;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f5ff;
+            padding-top: 56px;
+            color: #333;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--uc-blue) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+        }
+        
+        .navbar-brand {
+            padding-top: 0.3125rem;
+            padding-bottom: 0.3125rem;
+        }
+        
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        /* Tab Navigation - Convertida en navegación principal */
+        .nav-tabs-container {
+            background-color: var(--uc-blue);
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            z-index: 1020;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-tabs {
+            background: var(--uc-blue);
+            border-bottom: none;
+            padding: 0;
+            justify-content: center;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            padding: 15px 20px;
+            border-radius: 0;
+            transition: all 0.3s;
+        }
+        
+        .nav-tabs .nav-link:hover,
+        .nav-tabs .nav-link:focus {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: white;
+            border-bottom: 3px solid white;
+            background: transparent;
+        }
+        
+        .tab-content {
+            padding: 80px 0 30px;
+        }
+        
+        /* QR Section Styles */
+        .uc-header {
+            background: linear-gradient(135deg, var(--uc-blue) 0%, #002e6d 100%);
+            color: white;
+            padding: 20px 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+        }
+        
+        .location-badge {
+            background-color: var(--uc-red);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .qr-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: var(--uc-blue);
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--uc-red);
+        }
+        
+        .info-card {
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: var(--uc-blue);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            border: none;
+        }
+        
+        .alert-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--uc-red);
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .route-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .route-item:last-child {
+            border-bottom: none;
+        }
+        
+        .route-icon {
+            background-color: #e6f0ff;
+            color: var(--uc-blue);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .safety-tip {
+            display: flex;
+            padding: 15px;
+            border-left: 4px solid var(--uc-blue);
+            background-color: #f8fbff;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tip-icon {
+            color: var(--uc-blue);
+            font-size: 1.5rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .campus-map {
+            border-radius: 10px;
+            overflow: hidden;
+            height: 250px;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .qr-footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-safe {
+            background-color: #28a745;
+        }
+        
+        .status-warning {
+            background-color: #ffc107;
+        }
+        
+        .status-danger {
+            background-color: #dc3545;
+        }
+        
+        .traffic-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .traffic-level {
+            height: 100%;
+        }
+        
+        .traffic-low {
+            background-color: #28a745;
+            width: 30%;
+        }
+        
+        .traffic-medium {
+            background-color: #ffc107;
+            width: 60%;
+        }
+        
+        .traffic-high {
+            background-color: #dc3545;
+            width: 90%;
+        }
+        
+        .transport-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .transport-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: var(--uc-blue);
+        }
+        
+        /* Other Sections Styles */
+        .hero {
+            background: linear-gradient(rgba(0, 70, 173, 0.8), rgba(0, 70, 173, 0.9)), url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 0 80px;
+            margin-bottom: 30px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .benefit-card {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            height: 100%;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .benefit-card i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--uc-blue);
+        }
+        
+        .benefit-card:hover {
+            background-color: var(--uc-blue);
+            color: white;
+        }
+        
+        .benefit-card:hover i {
+            color: white;
+        }
+        
+        .testimonial {
+            background-color: var(--light);
+            border-radius: 10px;
+            padding: 30px;
+            position: relative;
+            border-left: 5px solid var(--uc-blue);
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .btn-uc {
+            background-color: var(--uc-blue);
+            border-color: var(--uc-blue);
+            color: white;
+        }
+        
+        .btn-uc:hover {
+            background-color: #003a8c;
+            border-color: #003a8c;
+            color: white;
+        }
+        
+        .btn-outline-uc {
+            color: var(--uc-blue);
+            border-color: var(--uc-blue);
+        }
+        
+        .btn-outline-uc:hover {
+            background-color: var(--uc-blue);
+            border-color: var(--uc-blue);
+            color: white;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        
+        .stats-card h3 {
+            color: var(--uc-blue);
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .footer a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer a:hover {
+            color: var(--accent);
+        }
+        
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--accent);
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--uc-blue);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+        
+        .how-it-works-step {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .uc-map {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        
+        .uc-map img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-tabs .nav-link {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            
+            .nav-tabs .nav-link i {
+                display: block;
+                margin: 0 auto 5px;
+                text-align: center;
+            }
+            
+            .hero {
+                padding: 80px 0 50px;
+            }
+            
+            .qr-content {
+                padding: 20px 15px;
+            }
+            
+            .tab-content {
+                padding-top: 100px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .nav-tabs .nav-link {
+                padding: 8px 5px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar simplificado -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgM2ExMCAxMCAwIDEgMSAwIDIwIDEwIDEwIDAgMCAxIDAgLTIweiI+PC9wYXRoPjxwYXRoIGQ9Ik0xMiA3djEwIj48L3BhdGg+PHBhdGggZD0iTTEyIDEyaDQiPjwvcGF0aD48cGF0aCBkPSJNMTIgMTJoLTIiPjwvcGF0aD48L3N2Zz4=" alt="ContiQR Logo">
+                <span>ContiQR</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Tab Navigation como navegación principal -->
+    <div class="nav-tabs-container">
+        <div class="container">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="qr-tab-btn" data-bs-toggle="tab" data-bs-target="#qr-tab" type="button" role="tab">
+                        <i class="bi bi-qr-code me-1"></i>Información QR
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="about-tab-btn" data-bs-toggle="tab" data-bs-target="#about-tab" type="button" role="tab">
+                        <i class="bi bi-info-circle me-1"></i>Sobre ContiQR
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="test-tab-btn" data-bs-toggle="tab" data-bs-target="#test-tab" type="button" role="tab">
+                        <i class="bi bi-question-circle me-1"></i>Test de Conocimientos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contact-tab-btn" data-bs-toggle="tab" data-bs-target="#contact-tab" type="button" role="tab">
+                        <i class="bi bi-person-lines-fill me-1"></i>Contacto
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="myTabContent">
+        <!-- QR Information Tab -->
+        <div class="tab-pane fade show active" id="qr-tab" role="tabpanel">
+            <div class="container">
+                <!-- Información de ubicación -->
+                <div class="text-center mb-4">
+                    <span class="location-badge">Punto QR #UC-204</span>
+                    <h2>Entrada Principal - Campus Cusco</h2>
+                    <p class="text-muted">Actualizado hace 5 minutos</p>
+                </div>
+                
+                <!-- Contenido principal -->
+                <div class="qr-content">
+                    <!-- Alerta importante -->
+                    <div class="info-card mb-4 position-relative">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Alerta Importante
+                            <div class="alert-badge">!</div>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0"><i class="bi bi-cone-striped me-2 text-danger"></i>Obras en la vía de acceso entre 10:00 AM y 2:00 PM. Se recomienda usar la entrada alterna por Av. Cultura.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Estado actual del tráfico -->
+                    <div class="mb-5">
+                        <h3 class="section-title">Estado Actual del Tráfico</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="info-card">
+                                    <div class="card-header">
+                                        <i class="bi bi-car-front me-2"></i>Tráfico vehicular
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="status-indicator status-warning"></span>
+                                            <span class="fw-medium">Moderado</span>
+                                        </div>
+                                        <div class="traffic-bar">
+                                            <div class="traffic-level traffic-medium"></div>
+                                        </div>
+                                        <p class="mb-0 small text-muted">Tiempo estimado de entrada: 8-12 min</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <div class="info-card">
+                                    <div class="card-header">
+                                        <i class="bi bi-people me-2"></i>Flujo peatonal
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="status-indicator status-safe"></span>
+                                            <span class="fw-medium">Fluido</span>
+                                        </div>
+                                        <div class="traffic-bar">
+                                            <div class="traffic-level traffic-low"></div>
+                                        </div>
+                                        <p class="mb-0 small text-muted">Sin congestiones en las aceras</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Rutas recomendadas -->
+                    <div class="mb-5">
+                        <h3 class="section-title">Rutas Recomendadas</h3>
+                        
+                        <div class="info-card">
+                            <div class="card-header">
+                                <i class="bi bi-signpost-split me-2"></i>Desde tu ubicación actual
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="route-item">
+                                    <div class="route-icon">
+                                        <i class="bi bi-building"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Edificio Principal (Aulas)</h6>
+                                        <p class="mb-0 small">Distancia: 350m - Tiempo: 5 min a pie</p>
+                                    </div>
+                                </div>
+                                <div class="route-item">
+                                    <div class="route-icon">
+                                        <i class="bi bi-book"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Biblioteca Central</h6>
+                                        <p class="mb-0 small">Distancia: 200m - Tiempo: 3 min a pie</p>
+                                    </div>
+                                </div>
+                                <div class="route-item">
+                                    <div class="route-icon">
+                                        <i class="bi bi-cup-hot"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Cafetería Estudiantil</h6>
+                                        <p class="mb-0 small">Distancia: 150m - Tiempo: 2 min a pie</p>
+                                    </div>
+                                </div>
+                                <div class="route-item">
+                                    <div class="route-icon">
+                                        <i class="bi bi-p-circle"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Estacionamiento Principal</h6>
+                                        <p class="mb-0 small">Distancia: 100m - Tiempo: 2 min a pie<br>
+                                        <span class="badge bg-warning text-dark">85% ocupado</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mapa del campus -->
+                    <div class="mb-5">
+                        <h3 class="section-title">Mapa del Campus</h3>
+                        
+                        <div class="campus-map">
+                            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #a7c6fa 0%, #e4edff 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                                <!-- Simulación de un mapa -->
+                                <div style="position: relative; width: 90%; height: 90%; background-color: #d4e2ff; border-radius: 8px;">
+                                    <!-- Edificios -->
+                                    <div style="position: absolute; top: 20%; left: 20%; width: 60px; height: 40px; background-color: #0046ad; border-radius: 4px;"></div>
+                                    <div style="position: absolute; top: 50%; left: 40%; width: 80px; height: 50px; background-color: #0046ad; border-radius: 4px;"></div>
+                                    <div style="position: absolute; top: 30%; left: 70%; width: 70px; height: 45px; background-color: #0046ad; border-radius: 4px;"></div>
+                                    
+                                    <!-- Ubicación actual (punto rojo) -->
+                                    <div style="position: absolute; top: 80%; left: 30%; width: 15px; height: 15px; background-color: #d4002a; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 3px rgba(212, 0, 42, 0.5);"></div>
+                                    
+                                    <!-- Rutas -->
+                                    <div style="position: absolute; top: 80%; left: 30%; width: 30%; height: 3px; background-color: #28a745; transform: rotate(-30deg); transform-origin: left;"></div>
+                                    <div style="position: absolute; top: 80%; left: 30%; width: 40%; height: 3px; background-color: #28a745; transform: rotate(20deg); transform-origin: left;"></div>
+                                </div>
+                                <div class="map-overlay">
+                                    <i class="bi bi-geo-alt-fill text-danger"></i> Tú estás aquí
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-center"><a href="#" class="btn btn-sm btn-outline-primary"><i class="bi bi-download me-1"></i>Descargar mapa completo</a></p>
+                    </div>
+                    
+                    <!-- Opciones de transporte -->
+                    <div class="mb-5">
+                        <h3 class="section-title">Opciones de Transporte</h3>
+                        
+                        <div class="info-card">
+                            <div class="card-header">
+                                <i class="bi bi-bus-front me-2"></i>Transporte público cercano
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="transport-option">
+                                    <div class="transport-icon">
+                                        <i class="bi bi-bus-front"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Línea 15 - Ruta Universitaria</h6>
+                                        <p class="mb-0 small">Próximo en: 8 min - Paradero a 150m</p>
+                                    </div>
+                                </div>
+                                <div class="transport-option">
+                                    <div class="transport-icon">
+                                        <i class="bi bi-bus-front"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Línea 23 - Centro Histórico</h6>
+                                        <p class="mb-0 small">Próximo en: 12 min - Paradero a 200m</p>
+                                    </div>
+                                </div>
+                                <div class="transport-option">
+                                    <div class="transport-icon">
+                                        <i class="bi bi-bicycle"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Estación de Bicicletas UC</h6>
+                                        <p class="mb-0 small">5 bicicletas disponibles - 100m</p>
+                                    </div>
+                                </div>
+                                <div class="transport-option">
+                                    <div class="transport-icon">
+                                        <i class="bi bi-car-front"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Zona de Taxis Seguros UC</h6>
+                                        <p class="mb-0 small">Disponibles ahora - 50m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Consejos de seguridad vial -->
+                    <div class="mb-4">
+                        <h3 class="section-title">Consejos de Seguridad</h3>
+                        
+                        <div class="safety-tip">
+                            <div class="tip-icon">
+                                <i class="bi bi-sign-stop"></i>
+                            </div>
+                            <div>
+                                <h6>Respeta los semáforos y señales</h6>
+                                <p class="mb-0">Cruza solo cuando el semáforo peatonal esté en verde y nunca por lugares no señalizados.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="safety-tip">
+                            <div class="tip-icon">
+                                <i class="bi bi-phone"></i>
+                            </div>
+                            <div>
+                                <h6>Evita distracciones con el móvil</h6>
+                                <p class="mb-0">No uses el teléfono mientras caminas o cruzas calles. Mantén tu atención en el tráfico.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="safety-tip">
+                            <div class="tip-icon">
+                                <i class="bi bi-brightness-high"></i>
+                            </div>
+                            <div>
+                                <h6>Visibilidad en horario nocturno</h6>
+                                <p class="mb-0">Usa ropa clara o reflectante si transitas de noche para que los conductores puedan verte.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="qr-footer">
+                        <p class="mb-1">Sistema ContiQR - Universidad Continental</p>
+                        <p class="mb-0 small text-muted">Actualizado el 05/10/2023 - 10:15 AM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Tab -->
+        <div class="tab-pane fade" id="about-tab" role="tabpanel">
+            <div class="hero">
+                <div class="container text-center">
+                    <div class="bg-light bg-opacity-25 d-inline-block p-2 rounded mb-3">
+                        <span class="text-light fw-bold">Universidad Continental</span>
+                    </div>
+                    <h1 class="display-4 fw-bold mb-3">ContiQR: Tu camino, siempre informado</h1>
+                    <p class="lead mb-4">La solución innovadora para mejorar la transitabilidad y seguridad en nuestro campus</p>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="row align-items-center mb-5">
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <h2 class="mb-4">El desafío de movilidad en nuestro campus</h2>
+                        <p class="lead">La Universidad Continental enfrenta problemas de transitabilidad vehicular y peatonal que afectan a toda la comunidad universitaria:</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent"><i class="bi bi-clock me-2 text-danger"></i>Retrasos de 10-20 minutos en llegar a clases</li>
+                            <li class="list-group-item bg-transparent"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Falta de señalización clara y cruces seguros</li>
+                            <li class="list-group-item bg-transparent"><i class="bi bi-car-front me-2 text-danger"></i>Congestión vehicular en horas punta</li>
+                            <li class="list-group-item bg-transparent"><i class="bi bi-person-walking me-2 text-danger"></i>Riesgo para peatones al cruzar las calles</li>
+                            <li class="list-group-item bg-transparent"><i class="bi bi-bus-front me-2 text-danger"></i>Transporte público ineficiente cerca del campus</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="uc-map">
+                            <img src="https://images.unsplash.com/photo-1560448204-603b3fc33ddc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80" alt="Mapa Universidad Continental">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-5">
+                    <h2 class="section-title text-center">Cómo funciona ContiQR</h2>
+                    
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-4">
+                            <div class="how-it-works-step">
+                                <div class="step-number">1</div>
+                                <h4>Encuentra el QR</h4>
+                                <p>Localiza los códigos QR estratégicamente ubicados en puntos clave del campus</p>
+                                <i class="bi bi-search-heart" style="font-size: 2rem; color: var(--uc-blue);"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="how-it-works-step">
+                                <div class="step-number">2</div>
+                                <h4>Escanea con tu móvil</h4>
+                                <p>Usa la cámara de tu smartphone para escanear el código QR</p>
+                                <i class="bi bi-phone" style="font-size: 2rem; color: var(--uc-blue);"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="how-it-works-step">
+                                <div class="step-number">3</div>
+                                <h4>Accede a información útil</h4>
+                                <p>Recibe datos actualizados sobre rutas, seguridad y accesibilidad</p>
+                                <i class="bi bi-info-circle" style="font-size: 2rem; color: var(--uc-blue);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-5">
+                    <h2 class="section-title text-center">Beneficios de ContiQR</h2>
+                    
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="benefit-card">
+                                <i class="bi bi-clock-history"></i>
+                                <h4>Ahorro de tiempo</h4>
+                                <p>Evita retrasos con información actualizada sobre rutas óptimas y congestiones</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="benefit-card">
+                                <i class="bi bi-shield-check"></i>
+                                <h4>Mayor seguridad</h4>
+                                <p>Recibe alertas sobre zonas peligrosas y recomendaciones de tránsito seguro</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="benefit-card">
+                                <i class="bi bi-person-heart"></i>
+                                <h4>Accesibilidad</h4>
+                                <p>Información específica para personas con movilidad reducida</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="benefit-card">
+                                <i class="bi bi-tree"></i>
+                                <h4>Sostenibilidad</h4>
+                                <p>Promueve el uso de transporte sostenible y reduce la congestión</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-5">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-header bg-uc text-white">
+                                    <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Impacto en la Comunidad</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="stats-card">
+                                                <h3>35%</h3>
+                                                <p>Reducción en retrasos a clases</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="stats-card">
+                                                <h3>28%</h3>
+                                                <p>Menos congestión en horas pico</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="stats-card">
+                                                <h3>42%</h3>
+                                                <p>Usuarios se sienten más seguros</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="stats-card">
+                                                <h3>87%</h3>
+                                                <p>Satisfacción con la solución</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="testimonial">
+                                <p class="fst-italic">"Antes de ContiQR, llegaba tarde casi todos los días por el tráfico cerca de la universidad. Ahora puedo planear mi ruta con anticipación y evitar las zonas más congestionadas. ¡Es un cambio increíble!"</p>
+                                <div class="d-flex align-items-center mt-4">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDQ2YWQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjAgMjF2LTJhNCA0IDAgMCAwLTQtNEg4YTQgNCAwIDAgMC00IDR2MiI+PC9wYXRoPjxjaXJjbGUgY3g9IjEyIiBjeT0iNyIgcj0iNCI+PC9jaXJjbGU+PC9zdmc+" width="50" height="50" alt="Usuario" class="me-3">
+                                    <div>
+                                        <p class="mb-0 fw-bold">José Yucra</p>
+                                        <p class="mb-0 text-muted">Estudiante de Ingeniería Civil</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Tab -->
+        <div class="tab-pane fade" id="test-tab" role="tabpanel">
+            <div class="container">
+                <h2 class="section-title text-center">Test de Conocimientos de Seguridad Vial</h2>
+                <p class="text-center mb-5">Evalúa tus conocimientos sobre seguridad vial y movilidad responsable</p>
+                
+                <div class="quiz-container">
+                    <div class="mb-4">
+                        <h5>1. ¿Cuál es la distancia mínima de seguridad que debes mantener con el vehículo delantero en carretera?</h5>
+                        <div class="btn-group d-flex flex-wrap" role="group">
+                            <input type="radio" class="btn-check" name="p1" id="p1a" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p1a">2 segundos</label>
+                            
+                            <input type="radio" class="btn-check" name="p1" id="p1b" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p1b">3 segundos</label>
+                            
+                            <input type="radio" class="btn-check" name="p1" id="p1c" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p1c">1 segundo</label>
+                            
+                            <input type="radio" class="btn-check" name="p1" id="p1d" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p1d">4 segundos</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>2. ¿Qué debes hacer al aproximarte a un paso de peatones con personas esperando para cruzar?</h5>
+                        <div class="btn-group d-flex flex-wrap" role="group">
+                            <input type="radio" class="btn-check" name="p2" id="p2a" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p2a">Acelerar para pasar rápido</label>
+                            
+                            <input type="radio" class="btn-check" name="p2" id="p2b" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p2b">Tocar el claxon para que se aparten</label>
+                            
+                            <input type="radio" class="btn-check" name="p2" id="p2c" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p2c">Reducir velocidad y detenerte si es necesario</label>
+                            
+                            <input type="radio" class="btn-check" name="p2" id="p2d" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p2d">Cambiar de carril sin reducir velocidad</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>3. ¿Cuál de estas opciones NO es una medida de seguridad para peatones?</h5>
+                        <div class="btn-group d-flex flex-wrap" role="group">
+                            <input type="radio" class="btn-check" name="p3" id="p3a" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p3a">Cruzar siempre por las zonas señalizadas</label>
+                            
+                            <input type="radio" class="btn-check" name="p3" id="p3b" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p3b">Usar ropa reflectante de noche</label>
+                            
+                            <input type="radio" class="btn-check" name="p3" id="p3c" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p3c">Mirar a ambos lados antes de cruzar</label>
+                            
+                            <input type="radio" class="btn-check" name="p3" id="p3d" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p3d">Correr para cruzar más rápido</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>4. ¿Qué porcentaje de accidentes viales involucran distracciones con el celular?</h5>
+                        <div class="btn-group d-flex flex-wrap" role="group">
+                            <input type="radio" class="btn-check" name="p4" id="p4a" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p4a">10%</label>
+                            
+                            <input type="radio" class="btn-check" name="p4" id="p4b" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p4b">23%</label>
+                            
+                            <input type="radio" class="btn-check" name="p4" id="p4c" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p4c">35%</label>
+                            
+                            <input type="radio" class="btn-check" name="p4" id="p4d" autocomplete="off">
+                            <label class="btn btn-outline-uc mb-2" for="p4d">50%</label>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="btn btn-uc btn-lg px-5">Comprobar Respuestas</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Tab -->
+        <div class="tab-pane fade" id="contact-tab" role="tabpanel">
+            <div class="container">
+                <h2 class="section-title text-center">Contacto</h2>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-envelope me-2"></i>¿Quieres saber más sobre ContiQR?</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Correo electrónico</label>
+                                        <input type="email" class="form-control" id="email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="carrera" class="form-label">Carrera/Programa</label>
+                                        <input type="text" class="form-control" id="carrera">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="mensaje" class="form-label">Mensaje</label>
+                                        <textarea class="form-control" id="mensaje" rows="4" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-uc">Enviar mensaje</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-geo-alt me-2"></i>Ubicación</h5>
+                                <p class="card-text">ContiQR está disponible en todos los campus de la Universidad Continental:</p>
+                                
+                                <ul class="list-group list-group-flush mb-4">
+                                    <li class="list-group-item">
+                                        <strong>Campus Cusco:</strong> Av. de la Cultura Nro. 733, San Sebastián
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Campus Arequipa:</strong> Calle Real Nro. 125, Yanahuara
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Campus Lima:</strong> Av. Alfredo Mendiola 5210, Los Olivos
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Campus Huancayo:</strong> Calle Real Nro. 125, Huancayo
+                                    </li>
+                                </ul>
+                                
+                                <h5 class="mt-4"><i class="bi bi-clock me-2"></i>Horario de atención</h5>
+                                <p>Lunes a Viernes: 8:00 am - 6:00 pm<br>
+                                Sábados: 9:00 am - 1:00 pm</p>
+                                
+                                <div class="mt-4">
+                                    <h5><i class="bi bi-telephone me-2"></i>Contacto directo</h5>
+                                    <p class="mb-1"><i class="bi bi-envelope me-2"></i>contiqr@continental.edu.pe</p>
+                                    <p class="mb-0"><i class="bi bi-phone me-2"></i>(01) 123-4567</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h4 class="d-flex align-items-center">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCIgdmlld0JveD0iMCAwIDI0IDI4IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgM2ExMCAxMCAwIDEgMSAwIDIwIDEwIDEwIDAgMCAxIDAgLTIweiI+PC9wYXRoPjxwYXRoIGQ9Ik0xMiA3djEwIj48L3BhdGg+PHBhdGggZD0iTTEyIDEyaDQiPjwvcGF0aD48cGF0aCBkPSJNMTIgMTJoLTIiPjwvcGF0aD48L3N2Zz4=" alt="ContiQR Logo" class="me-2">
+                        ContiQR
+                    </h4>
+                    <p>Una solución innovadora de la Universidad Continental para mejorar la transitabilidad y seguridad en nuestro campus.</p>
+                    <div class="mt-3">
+                        <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5>Enlaces</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#qr-tab">Información QR</a></li>
+                        <li class="mb-2"><a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#about-tab">Sobre ContiQR</a></li>
+                        <li class="mb-2"><a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#test-tab">Test de Conocimientos</a></li>
+                        <li><a href="#" class="nav-link" data-bs-toggle="tab" data-bs-target="#contact-tab">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Recursos</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Manual de usuario ContiQR</a></li>
+                        <li class="mb-2"><a href="#">Mapa de puntos QR en campus</a></li>
+                        <li class="mb-2"><a href="#">Guía de seguridad vial</a></li>
+                        <li><a href="#">Preguntas frecuentes</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3 mb-4">
+                    <h5>Universidad Continental</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-globe me-2"></i>www.continental.edu.pe</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>informes@continental.edu.pe</li>
+                        <li><i class="bi bi-geo-alt me-2"></i>Varios campus a nivel nacional</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="mt-0 mb-4">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-md-0">&copy; 2023 ContiQR - Universidad Continental. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">Desarrollado con <i class="bi bi-heart-fill text-danger"></i> para una movilidad más segura</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update traffic data simulation
+            function updateTrafficData() {
+                const trafficLevel = document.querySelector('.traffic-level');
+                const trafficStatus = document.querySelector('.status-indicator');
+                const trafficText = document.querySelector('.traffic-bar').previousElementSibling.querySelector('span');
+                
+                // Change traffic state randomly for demo
+                const states = [
+                    {class: 'traffic-low', width: '30%', status: 'status-safe', text: 'Fluido'},
+                    {class: 'traffic-medium', width: '60%', status: 'status-warning', text: 'Moderado'},
+                    {class: 'traffic-high', width: '90%', status: 'status-danger', text: 'Congestionado'}
+                ];
+                
+                const randomState = states[Math.floor(Math.random() * states.length)];
+                
+                // Update elements
+                trafficLevel.className = 'traffic-level ' + randomState.class;
+                trafficLevel.style.width = randomState.width;
+                trafficStatus.className = 'status-indicator ' + randomState.status;
+                trafficText.textContent = randomState.text;
+            }
+            
+            // Update every 10 seconds (simulation)
+            setInterval(updateTrafficData, 10000);
+            
+            // Update timestamp
+            function updateTimestamp() {
+                const now = new Date();
+                const timestampElements = document.querySelectorAll('.text-muted:last-child');
+                
+                timestampElements.forEach(el => {
+                    if (el.textContent.includes('Actualizado el')) {
+                        el.textContent = `Actualizado el ${now.toLocaleDateString()} - ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})`;
+                    }
+                });
+            }
+            
+            setInterval(updateTimestamp, 60000);
+            
+            // Test functionality
+            const checkAnswersBtn = document.querySelector('#test-tab .btn');
+            if (checkAnswersBtn) {
+                checkAnswersBtn.addEventListener('click', function() {
+                    alert('¡Gracias por completar el test! Tus respuestas han sido registradas. Pronto recibirás los resultados.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
